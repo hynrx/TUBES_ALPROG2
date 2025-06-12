@@ -5,11 +5,12 @@ import (
 	"strings"
 )
 
-const jumlahMaksimumPengguna = 5
-const jumlahMaksimumMinat = 10
-const jumlahMaksimumKeahlian = 10
-const jumlahMaksimumKarier = 10
+const jumlahMaksimumPengguna = 6
+const jumlahMaksimumMinat = 6
+const jumlahMaksimumKeahlian = 6
+const jumlahMaksimumKarier = 6
 
+// penggunaan array statis pada daftar minat dan daftar keahlian
 type Pengguna struct {
 	namaPengguna   string
 	kataSandi      string
@@ -25,6 +26,7 @@ type Karier struct {
 	gajiRataRata int
 }
 
+// penggunaan array statis pada daftar pengguna dan daftar karier
 var daftarPengguna [jumlahMaksimumPengguna]Pengguna
 var jumlahPengguna int = 0
 var penggunaSedangLogin *Pengguna = nil
@@ -118,7 +120,7 @@ func loginPengguna() {
 // fungsi cari indeks pengguna
 func cariIndeksPengguna(namaPengguna string) int {
 	for i := 0; i < jumlahPengguna; i++ {
-		if daftarPengguna[i].namaPengguna == namaPengguna {
+		if strings.EqualFold(daftarPengguna[i].namaPengguna, namaPengguna) {
 			return i
 		}
 	}
@@ -154,7 +156,7 @@ func menuUtama() {
 			fmt.Println("-Hisyam Nurdiatmoko")
 			fmt.Println("-Mohammad Reyhan Aretha Fatin")
 			penggunaSedangLogin = nil
-			return // kembali ke loop di func main() yang menampilkan menuMasuk()
+			return // kembali ke menu masuk
 		default:
 			fmt.Println("Pilihan tidak valid")
 		}
@@ -179,6 +181,7 @@ func kelolaMinat() {
 			} else {
 				fmt.Print("Masukkan minat baru: ")
 				minatBaru := bacaInput()
+				// penggunaan sequential search lewat fungsi mengandung
 				if !mengandung(penggunaSedangLogin.daftarMinat[:penggunaSedangLogin.jumlahMinat], minatBaru) {
 					penggunaSedangLogin.daftarMinat[penggunaSedangLogin.jumlahMinat] = minatBaru
 					penggunaSedangLogin.jumlahMinat++
@@ -193,6 +196,7 @@ func kelolaMinat() {
 			} else {
 				fmt.Print("Masukkan minat yang ingin dihapus: ")
 				minatHapus := bacaInput()
+				// penggunaan sequential search lewat fungsi cariIndeks
 				indeks := cariIndeks(penggunaSedangLogin.daftarMinat[:penggunaSedangLogin.jumlahMinat], minatHapus)
 				if indeks == -1 {
 					fmt.Println("Minat tidak ditemukan.")
@@ -205,7 +209,7 @@ func kelolaMinat() {
 				}
 			}
 		case "3":
-			return //kembali ke menuUtama()
+			return
 		default:
 			fmt.Println("Pilihan tidak valid.")
 		}
@@ -230,6 +234,7 @@ func kelolaKeahlian() {
 			} else {
 				fmt.Print("Masukkan keahlian baru: ")
 				keahlianBaru := bacaInput()
+				// penggunaan sequential search lewat fungsi mengandung
 				if !mengandung(penggunaSedangLogin.daftarKeahlian[:penggunaSedangLogin.jumlahKeahlian], keahlianBaru) {
 					penggunaSedangLogin.daftarKeahlian[penggunaSedangLogin.jumlahKeahlian] = keahlianBaru
 					penggunaSedangLogin.jumlahKeahlian++
@@ -244,6 +249,7 @@ func kelolaKeahlian() {
 			} else {
 				fmt.Print("Masukkan keahlian yang ingin dihapus: ")
 				keahlianHapus := bacaInput()
+				// penggunaan sequential search lewat fungsi cariIndeks
 				indeks := cariIndeks(penggunaSedangLogin.daftarKeahlian[:penggunaSedangLogin.jumlahKeahlian], keahlianHapus)
 				if indeks == -1 {
 					fmt.Println("Keahlian tidak ditemukan.")
@@ -256,25 +262,27 @@ func kelolaKeahlian() {
 				}
 			}
 		case "3":
-			return //kembali ke menuUtama()
+			return
 		default:
 			fmt.Println("Pilihan tidak valid.")
 		}
 	}
 }
 
+// fungsi pembantu memeriksa apakah array mengandung nilai
 func mengandung(arr []string, nilai string) bool {
 	for _, v := range arr {
-		if strings.EqualFold(v, nilai) { //membandingkan tanpa memperhatikan case
+		if strings.EqualFold(v, nilai) {
 			return true
 		}
 	}
 	return false
 }
 
+// fungsi bantu untuk mencari indeks nilai dalam array
 func cariIndeks(arr []string, nilai string) int {
 	for i, v := range arr {
-		if strings.EqualFold(v, nilai) { //membandingkan tanpa memperhatikan case
+		if strings.EqualFold(v, nilai) {
 			return i
 		}
 	}
@@ -294,6 +302,7 @@ func cariKarier() {
 		kataKunci = strings.ToLower(bacaInput())
 		fmt.Println("Hasil pencarian:")
 		ditemukan := false
+		// sequential search untuk mencari karier berdasarkan nama
 		for i := 0; i < jumlahKarier; i++ {
 			if strings.Contains(strings.ToLower(daftarKarier[i].namaKarier), kataKunci) {
 				fmt.Printf("- %s (Kategori: %s, Gaji: Rp %d)\n", daftarKarier[i].namaKarier, daftarKarier[i].kategori, daftarKarier[i].gajiRataRata)
@@ -308,6 +317,7 @@ func cariKarier() {
 		kataKunci = strings.ToLower(bacaInput())
 		fmt.Println("Hasil pencarian:")
 		ditemukan := false
+		// sequential search untuk mencari karier berdasarkan kategori
 		for i := 0; i < jumlahKarier; i++ {
 			if strings.ToLower(daftarKarier[i].kategori) == kataKunci {
 				fmt.Printf("- %s (Kategori: %s, Gaji: Rp %d)\n", daftarKarier[i].namaKarier, daftarKarier[i].kategori, daftarKarier[i].gajiRataRata)
@@ -366,9 +376,9 @@ func menuRekomendasiKarier() {
 	fmt.Print("Pilih (Masukan angka): ")
 	var pilihan string
 	fmt.Scanln(&pilihan)
-	//proses pengurutan (selection sort)
+	// proses pengurutan menggunakan selection sort
 	switch pilihan {
-	case "1": //urut persentase turun
+	case "1": // urut persentase turun (descending)
 		for i := 0; i < jumlahRekomendasi-1; i++ {
 			indeksMaks := i
 			for j := i + 1; j < jumlahRekomendasi; j++ {
@@ -382,7 +392,7 @@ func menuRekomendasiKarier() {
 				daftarRekomendasi[indeksMaks] = sementara
 			}
 		}
-	case "2": //urut persentase naik
+	case "2": // urut persentase naik (ascending)
 		for i := 0; i < jumlahRekomendasi-1; i++ {
 			indeksMin := i
 			for j := i + 1; j < jumlahRekomendasi; j++ {
@@ -396,7 +406,7 @@ func menuRekomendasiKarier() {
 				daftarRekomendasi[indeksMin] = sementara
 			}
 		}
-	case "3": //urut gaji turun
+	case "3": // urut gaji turun (descending)
 		for i := 0; i < jumlahRekomendasi-1; i++ {
 			indeksMaks := i
 			for j := i + 1; j < jumlahRekomendasi; j++ {
@@ -410,7 +420,7 @@ func menuRekomendasiKarier() {
 				daftarRekomendasi[indeksMaks] = sementara
 			}
 		}
-	case "4": //urut gaji naik
+	case "4": // urut gaji naik (ascending)
 		for i := 0; i < jumlahRekomendasi-1; i++ {
 			indeksMin := i
 			for j := i + 1; j < jumlahRekomendasi; j++ {
@@ -426,7 +436,7 @@ func menuRekomendasiKarier() {
 		}
 	default:
 		fmt.Println("Pilihan tidak valid. Mengurutkan berdasarkan persentase kecocokan menurun.")
-		//urut persentase turun
+		// urut persentase turun (descending)
 		for i := 0; i < jumlahRekomendasi-1; i++ {
 			indeksMaks := i
 			for j := i + 1; j < jumlahRekomendasi; j++ {
@@ -441,7 +451,7 @@ func menuRekomendasiKarier() {
 			}
 		}
 	}
-	//menampilkan hasil rekomendasi yang sudah diurutkan
+	// fungsi menampilkan hasil rekomendasi yang sudah diurutkan
 	fmt.Println("\n=====| Rekomendasi Karier untuk Anda |=====")
 	for i := 0; i < jumlahRekomendasi; i++ {
 		fmt.Printf("%d. %s (Kategori: %s) - Kecocokan: %d%% - Gaji Rata-rata: Rp %d\n",
